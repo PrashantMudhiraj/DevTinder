@@ -7,18 +7,21 @@ const User = require("./model/user");
 const app = express();
 
 app.post("/signup", async (req, res) => {
-    const userObj = {
-        firstName: "Prashant",
-        lastName: "Chevula",
-        age: 25,
-        password: "1234567890",
-        emailId: "xyz@gmail.com",
-    };
-
-    //Creating a new instance of the User model
-    const user = new User(userObj);
-    await user.save();
-    res.send("signed up")
+    try {
+        const userObj = {
+            firstName: "Prashant",
+            lastName: "Chevula",
+            age: 25,
+            password: "1234567890",
+            emailId: "xyz@gmail.com",
+        };
+        //Creating a new instance of the User model
+        const user = new User(userObj);
+        await user.save();
+        res.send("signed up");
+    } catch (error) {
+        res.status(400).send("Error saving the user: " + error.message);
+    }
 });
 
 connectDB()
@@ -28,6 +31,6 @@ connectDB()
             console.log("Server is successfully listening on port 3000");
         });
     })
-    .catch(() => {
-        console.log("Error in connecting to DB");
+    .catch((err) => {
+        console.log("Error in connecting to DB", err.message);
     });
