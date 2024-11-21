@@ -5,25 +5,42 @@ const { adminAuth, userAuth, errorHandler } = require("./middlewares");
 const User = require("./model/user");
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
 app.post("/signup", async (req, res) => {
     try {
-        // console.log(req.body)
-        // const userObj = {
-        //     firstName: "Prashant",
-        //     lastName: "Chevula",
-        //     age: 25,
-        //     password: "1234567890",
-        //     emailId: "xyz@gmail.com",
-        // };
         //Creating a new instance of the User model
-        // const user = new User(userObj);
-        const user = new User(req.body)
+        const user = new User(req.body);
         await user.save();
         res.send("signed up");
     } catch (error) {
         res.status(400).send("Error saving the user: " + error.message);
+    }
+});
+
+app.get("/user", async (req, res) => {
+    try {
+        const userEmail = req.body.emailId;
+        const user = await User.find({ emailId: userEmail });
+        // const user = await User.findOne({ emailId: userEmail });
+        // if(!user)
+        if (user.length === 0) {
+            res.status(404).send("User not Found");
+        } else {
+            res.send(user);
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(400).send("Something went wrong");
+    }
+});
+
+app.get("/feed", async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.send(users);
+    } catch (error) {
+        res.status(400).send("Something went wrong");
     }
 });
 
