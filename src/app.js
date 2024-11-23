@@ -44,18 +44,33 @@ app.get("/feed", async (req, res) => {
     }
 });
 
-app.patch('/user', async (req, res) => {
+app.patch("/user/:userId", async (req, res) => {
     try {
-        const userId = req.body.userId;
-        const dataToUpdate = req.body.data
-        const user = await User.findByIdAndUpdate(userId, dataToUpdate, { returnDocument: "after" })
-        console.log(user)
-        res.send("User Data updated")
-
+        const userId = req.params?.userId;
+        const dataToUpdate = req.body;
+        const ALLOWED_UPDATES = ["age", "gender", "about", "skills", "photourl"];
+        const isUpdatedAllowed = Object.keys(dataToUpdate).every((key) =>
+            ALLOWED_UPDATES.includes(key)
+        );
+        console.log(userId)
+        // console.log(isUpdatedAllowed);
+        // if (!isUpdatedAllowed) {
+        //     throw new Error("Update not allowed");
+        // }
+        // if (dataToUpdate?.skills.length >= 10) {
+        //     throw new Error("More than 10 skills were not allowed");
+        // } //API level validation
+        const user = await User.findByIdAndUpdate(userId, dataToUpdate, {
+            returnDocument: "after",
+            runValidators: true,
+        });
+        console.log(user);
+        res.send("User Data updated");
     } catch (error) {
-        res.status(400).send("Something went wrong")
+        console.log(error.message);
+        res.status(400).send(`Updated failed : ${error.message}`);
     }
-})
+});
 
 app.delete("/user", async (req, res) => {
     const userId = req.body.userId;
