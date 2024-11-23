@@ -7,7 +7,7 @@ const userSchema = new Schema(
             type: String,
             required: true,
             maxLength: 30,
-            minLength: 5,
+            minLength: 3,
         },
         lastName: {
             type: String,
@@ -27,6 +27,11 @@ const userSchema = new Schema(
         password: {
             type: String,
             required: true,
+            validate(password) {
+                if (!validator.isStrongPassword(password)) {
+                    throw new Error("Enter strong password")
+                }
+            }
         },
         age: {
             type: Number,
@@ -42,6 +47,11 @@ const userSchema = new Schema(
         },
         photoUrl: {
             type: String,
+            validate(url) {
+                if (!validator.isURL(url)) {
+                    throw new Error("Not a valid URL")
+                }
+            }
         },
         about: {
             type: String,
