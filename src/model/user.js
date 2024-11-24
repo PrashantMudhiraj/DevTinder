@@ -55,7 +55,7 @@ const userSchema = new Schema(
         },
         about: {
             type: String,
-            default: "about feild (Test)",
+            default: "about field (Test)",
         },
         skills: {
             type: [String],
