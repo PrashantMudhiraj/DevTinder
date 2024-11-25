@@ -1,10 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const validator = require("validator");
-const bcrypt = require("bcrypt");
 const User = require("./model/user");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 
 const { connectDB } = require("./config/database");
 const { adminAuth, userAuth, errorHandler } = require("./middlewares");
@@ -53,13 +51,11 @@ app.post("/login", async (req, res) => {
             throw new Error("Invalid Credentails!!");
         }
         // console.log(user)
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await user.validatePassword(password)
         // console.log(isPasswordValid)
         if (isPasswordValid) {
             //Create a JWT Token
-            const token = await jwt.sign({ _id: user._id }, process.env.PRIVATE_KEY, {
-                expiresIn: "1d",
-            });
+            const token = await user.getJWT()
             //Add JWt token in cookie
             // res.cookie("token", token, { expires: new Date(Date.now() + 900000) });
             res.cookie("token", token, { maxAge: 3.6e+6 });
