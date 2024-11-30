@@ -1,0 +1,69 @@
+const {
+    authRouter,
+    validateSignUpData,
+    encryptPassword,
+    User,
+    validator
+} = require("./index");
+
+authRouter.post("/signup", async (req, res) => {
+    try {
+        const { firstName, lastName, emailId, password, age, skills, about } =
+            req.body; //validate req.body
+        validateSignUpData(req);
+        //Encrypt password
+        const passwordHash = await encryptPassword(password);
+        // console.log(passwordHash);
+        //Creating a new instance of the User model
+        const user = new User({
+            firstName,
+            lastName,
+            emailId,
+            password: passwordHash,
+            age,
+            skills,
+            about,
+        });
+        await user.save();
+        res.send("signed up");
+    } catch (error) {
+        res.status(400).send("Error saving the user: " + error.message);
+    }
+});
+
+authRouter.post("/login", async (req, res) => {
+    try {
+        const { emailId, password } = req.body;
+        if (!validator.isEmail(emailId)) {
+            throw new Error("Enter a valid Email Id");
+        }
+
+        const user = await User.findOne({ emailId });
+        if (!user) {
+            throw new Error("Invalid Credentails!!");
+        }
+        // console.log(user)
+        const isPasswordValid = await user.validatePassword(password);
+        // console.log(isPasswordValid)
+        if (isPasswordValid) {
+            //Create a JWT Token
+            const token = await user.getJWT();
+            //Add JWt token in cookie
+            // res.cookie("token", token, { expires: new Date(Date.now() + 900000) });
+            res.cookie("token", token, { maxAge: 3.6e6 });
+            res.send("Login Successful!!");
+        } else {
+            throw new Error("Invalid Credentails!!");
+        }
+    } catch (error) {
+        res.status(400).send("Error : " + error.message);
+    }
+});
+
+authRouter.post("/logout", async (req, res) => {
+    res.cookie("token", null, {
+        expires: new Date(Date.now())
+    }).send("User logged out!!!")
+})
+
+module.exports = authRouter;
