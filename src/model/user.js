@@ -59,6 +59,11 @@ const userSchema = new Schema(
         about: {
             type: String,
             default: "about field (Test)",
+            validate(value) {
+                if (value.length > 100) {
+                    throw new Error("length of about field should not exceed 100 letters")
+                }
+            }
         },
         skills: {
             type: [String],
