@@ -6,6 +6,7 @@ const { validateEditRequestData, validatePasswordUpdate, validateSignUpData } = 
 
 
 const User = require("../model/user");
+const ConnectionRequest = require("../model/connectionRequest")
 const authRouter = express.Router();
 const profileRouter = express.Router();
 const requestRouter = express.Router();
@@ -18,6 +19,7 @@ module.exports = {
     validateSignUpData,
     encryptPassword,
     User,
+    ConnectionRequest,
     userAuth,
     validateEditRequestData,
     validatePasswordUpdate,

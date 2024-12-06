@@ -54,7 +54,7 @@ profileRouter.patch("/profile/UpdatePassword", userAuth, async (req, res) => {
 
         const isUpdateAllowed = await validatePasswordUpdate(req);
         if (!isUpdateAllowed)
-            throw new Error("Please enter correct existing password");
+            throw new Error("Updated failed, Please retry.");
         const passwordHash = await encryptPassword(req.body.newPassword)
         loggedInUser.password = passwordHash
         await loggedInUser.save()
