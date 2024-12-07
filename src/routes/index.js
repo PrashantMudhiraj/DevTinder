@@ -10,11 +10,13 @@ const ConnectionRequest = require("../model/connectionRequest")
 const authRouter = express.Router();
 const profileRouter = express.Router();
 const requestRouter = express.Router();
+const userRouter = express.Router()
 
 module.exports = {
     authRouter,
     profileRouter,
     requestRouter,
+    userRouter,
     validator,
     validateSignUpData,
     encryptPassword,
