@@ -1,4 +1,10 @@
-const { requestRouter, userAuth, ConnectionRequest, User } = require("./index");
+const {
+    requestRouter,
+    userAuth,
+    ConnectionRequest,
+    User,
+    isValidStatus,
+} = require("./index");
 
 requestRouter.post(
     "/request/send/:status/:userId",
@@ -11,8 +17,8 @@ requestRouter.post(
 
             const toUser = await User.findById(toUserId);
 
-            const ALLOWED_SEND_STATUS = ["interested", "ignored"];
-            if (!ALLOWED_SEND_STATUS.includes(status)) {
+            // const ALLOWED_SEND_STATUS = ["interested", "ignored"];
+            if (!isValidStatus("send", status)) {
                 return res
                     .status(400)
                     .send(`${status} status request not allowed`);
@@ -45,6 +51,38 @@ requestRouter.post(
             });
         } catch (error) {
             res.status(400).send("ERROR : " + error.message);
+        }
+    }
+);
+
+requestRouter.post(
+    "/request/review/:status/:requestId",
+    userAuth,
+    async (req, res) => {
+        try {
+            const loggerInUser = req.user;
+            const { status, requestId } = req.params;
+            // const ALLOWED_REVIEW_STATUS = ["accepted", "rejected"];
+            if (!isValidStatus("review", status)) {
+                return res.status(400).send("Status not allowed");
+            }
+
+            const connectionRequest = await ConnectionRequest.findOne({
+                _id: requestId,
+                toUserId: loggerInUser._id,
+                status: "interested",
+            });
+            if (!connectionRequest) {
+                return res
+                    .status(404)
+                    .json({ messge: "No connection requests" });
+            }
+            connectionRequest.status = status;
+            const data = await connectionRequest.save();
+            res.json({ message: `Connection request ${status}`, data: data });
+        } catch (error) {
+            console.log(error);
+            res.status(400).send("Something went wrong :" + error.message);
         }
     }
 );

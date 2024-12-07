@@ -21,11 +21,23 @@ function validateEditRequestData(requestToUpdateData) {
     return isEditAllowed;
 }
 
+function isValidStatus(type, status) {
+    const ALLOWED_SEND_STATUS = ["interested", "ignored"];
+    const ALLOWED_REVIEW_STATUS = ["accepted", "rejected"];
+
+    if (type === "send") {
+        return ALLOWED_SEND_STATUS.includes(status);
+    } else if ((type = "review")) {
+        return ALLOWED_REVIEW_STATUS.includes(status);
+    }
+}
+
 async function validatePasswordUpdate(req) {
     const loggedInUser = req.user;
     const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword
-    if (!newPassword || !oldPassword) throw new Error("Please fill new and old password fields")
+    const newPassword = req.body.newPassword;
+    if (!newPassword || !oldPassword)
+        throw new Error("Please fill new and old password fields");
 
     const UPDATE_ALLOWED = ["oldPassword", "newPassword"];
     const isUpdateAllowed = Object.keys(req.body).every((key) =>
@@ -35,9 +47,12 @@ async function validatePasswordUpdate(req) {
         const isPasswordMatched = await loggedInUser.validatePassword(
             oldPassword
         );
-        if (oldPassword === newPassword) throw new Error("The new password must be different from the old password.")
+        if (oldPassword === newPassword)
+            throw new Error(
+                "The new password must be different from the old password."
+            );
 
-        return isPasswordMatched
+        return isPasswordMatched;
     }
     return isUpdateAllowed;
 }
@@ -46,4 +61,5 @@ module.exports = {
     validateSignUpData,
     validateEditRequestData,
     validatePasswordUpdate,
+    isValidStatus
 };
