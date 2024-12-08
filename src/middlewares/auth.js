@@ -1,3 +1,6 @@
+const jwt = require("jsonwebtoken");
+const User = require("../model/user");
+
 const adminAuth = (req, res, next) => {
     console.log("Admin Auth check");
     const token = "xyz";
@@ -9,14 +12,26 @@ const adminAuth = (req, res, next) => {
     }
 };
 
-const userAuth = (req, res, next) => {
-    console.log("User Auth check");
-    const token = "xyz";
-    const isAdminAuthorized = token === "xyz";
-    if (!isAdminAuthorized) {
-        res.status(401).send("unautorized");
-    } else {
+const userAuth = async (req, res, next) => {
+    try {
+        // const cookies = req.cookies;
+        const { token } = req.cookies;
+
+        // const { token } = cookies;
+        if (!token) {
+            throw new Error("Please Login");
+        }
+        //validate the token
+        const { _id } = await jwt.verify(token, process.env.PRIVATE_KEY);
+        const user = await User.findById(_id);
+
+        if (!user) {
+            throw new Error("Please login again!!");
+        }
+        req.user = user;
         next();
+    } catch (error) {
+        res.status(400).send("ERROR : " + error.message);
     }
 };
 

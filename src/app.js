@@ -1,25 +1,25 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
+
 const { connectDB } = require("./config/database");
-const { adminAuth, userAuth, errorHandler } = require("./middlewares");
-const User = require("./model/user");
 
 const app = express();
 
-app.post("/signup", async (req, res) => {
-    const userObj = {
-        firstName: "Prashant",
-        lastName: "Chevula",
-        age: 25,
-        password: "1234567890",
-        emailId: "xyz@gmail.com",
-    };
+app.use(express.json());
+app.use(cookieParser());
 
-    //Creating a new instance of the User model
-    const user = new User(userObj);
-    await user.save();
-    res.send("signed up")
-});
+
+const authRouter = require('./routes/auth.js')
+const profileRouter = require('./routes/profile.js')
+const requestRouter = require('./routes/requests.js')
+const userRouter = require('./routes/user.js')
+
+app.use('/', authRouter)
+app.use('/', profileRouter)
+app.use('/', requestRouter)
+app.use('/', userRouter)
+
 
 connectDB()
     .then(() => {
@@ -28,6 +28,6 @@ connectDB()
             console.log("Server is successfully listening on port 3000");
         });
     })
-    .catch(() => {
-        console.log("Error in connecting to DB");
+    .catch((err) => {
+        console.log("Error in connecting to DB", err.message);
     });
