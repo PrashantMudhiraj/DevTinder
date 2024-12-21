@@ -52,7 +52,7 @@ authRouter.post("/login", async (req, res) => {
             //Add JWt token in cookie
             // res.cookie("token", token, { expires: new Date(Date.now() + 900000) });
             res.cookie("token", token, { maxAge: 3.6e6 });
-            res.send("Login Successful!!");
+            res.send(user);
         } else {
             throw new Error("Invalid Credentails!!");
         }
