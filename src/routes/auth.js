@@ -36,12 +36,14 @@ authRouter.post("/login", async (req, res) => {
     try {
         const { emailId, password } = req.body;
         if (!validator.isEmail(emailId)) {
-            throw new Error("Enter a valid Email Id");
+            // throw new Error("Enter a valid Email Id");
+            res.status(401).send("Invalid Email Id");
         }
 
         const user = await User.findOne({ emailId });
         if (!user) {
-            throw new Error("Invalid Credentails!!");
+            // throw new Error("Invalid Credentails!!");
+            res.status(401).send("Invalid Credentials");
         }
         // console.log(user)
         const isPasswordValid = await user.validatePassword(password);
@@ -54,7 +56,8 @@ authRouter.post("/login", async (req, res) => {
             res.cookie("token", token, { maxAge: 3.6e6 });
             res.send(user);
         } else {
-            throw new Error("Invalid Credentails!!");
+            // throw new Error("Invalid Credentails!!");
+            res.status(401).send("Invalid Credentials");
         }
     } catch (error) {
         res.status(400).send("Error : " + error.message);
@@ -62,9 +65,13 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.post("/logout", async (req, res) => {
-    res.cookie("token", null, {
-        expires: new Date(Date.now()),
-    }).send("User logged out!!!");
+    // console.log("/logout");
+    // res.cookie("token", null, {
+    //     expires: new Date(Date.now()),
+    // });
+    res.clearCookie("token");
+
+    res.json("User logged out!!!");
 });
 
 module.exports = authRouter;

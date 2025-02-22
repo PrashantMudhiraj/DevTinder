@@ -16,6 +16,7 @@ const userAuth = async (req, res, next) => {
     try {
         // const cookies = req.cookies;
         const { token } = req.cookies;
+        console.log(token);
 
         // const { token } = cookies;
         if (!token) {
