@@ -19,7 +19,8 @@ const userAuth = async (req, res, next) => {
 
         // const { token } = cookies;
         if (!token) {
-            throw new Error("Please Login");
+            // throw new Error("Please Login");
+            return res.status(401).send("Please Login!");
         }
         //validate the token
         const { _id } = await jwt.verify(token, process.env.PRIVATE_KEY);
