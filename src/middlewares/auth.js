@@ -16,7 +16,7 @@ const userAuth = async (req, res, next) => {
     try {
         // const cookies = req.cookies;
         const { token } = req.cookies;
-        console.log(token);
+        // console.log(token);
 
         // const { token } = cookies;
         if (!token) {
@@ -30,6 +30,7 @@ const userAuth = async (req, res, next) => {
         if (!user) {
             throw new Error("Please login again!!");
         }
+        // console.log(user);
         req.user = user;
         next();
     } catch (error) {

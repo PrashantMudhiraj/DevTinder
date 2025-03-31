@@ -8,8 +8,17 @@ const {
 
 authRouter.post("/signup", async (req, res) => {
     try {
-        const { firstName, lastName, emailId, password, age, skills, about } =
-            req.body; //validate req.body
+        const {
+            firstName,
+            lastName,
+            emailId,
+            password,
+            photoUrl,
+            age,
+            skills,
+            about,
+            gender,
+        } = req.body; //validate req.body
         validateSignUpData(req);
         //Encrypt password
         const passwordHash = await encryptPassword(password);
@@ -23,6 +32,8 @@ authRouter.post("/signup", async (req, res) => {
             age,
             skills,
             about,
+            gender,
+            photoUrl,
         });
         await user.save();
         res.send("signed up");
