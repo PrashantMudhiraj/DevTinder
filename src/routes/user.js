@@ -1,6 +1,6 @@
 const { userRouter, userAuth, ConnectionRequest, User } = require("./index");
 
-const UserSafeData = "firstName lastName skills about age gender";
+const UserSafeData = "firstName lastName skills about age gender photoUrl ";
 
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     try {
@@ -81,7 +81,10 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
                     },
                 },
             ],
-        }).select(UserSafeData).skip(skip).limit(limit)
+        })
+            .select(UserSafeData)
+            .skip(skip)
+            .limit(limit);
 
         // const feed = await User.find({
         //     _id: {

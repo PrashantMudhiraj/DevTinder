@@ -224,7 +224,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/profile", userAuth, async (req, res) => {
     try {
-        console.log(req.user)
+        // console.log(req.user)
         res.send("profile reverted");
     } catch (error) {
         res.status(400).send("ERROR : " + error.message);
