@@ -14,7 +14,7 @@
 
 ##connectionRequestRouter
 
--   POST /request/send/intrested/:userId
+-   POST /request/send/interested/:userId
 -   POST /request/send/ignored/:userId
 
     -   POST /request/send/:status/:userId
@@ -29,4 +29,4 @@
 -   GET /user/requests/received
 -   GET /feed - get you all profiles of other users on platfrom
 
-status : intrested , ignored , accpeted , rejected
+status : interested , ignored , accepted , rejected
